@@ -1,0 +1,47 @@
+# CMake
+CMakeCache.txt
+CMakeFiles
+CMakeScripts
+Testing
+Makefile
+cmake_install.cmake
+install_manifest.txt
+compile_commands.json
+CTestTestfile.cmake
+
+# libbpf installation folder
+third_party
+
+# Output
+packages_ebpf
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Symbol files
+*.dbg
+
+# VSCode
+.vscode/**
+
+## Build generated
+build/
+
+# LLDB profile files
+**/*.profraw
+
+# Test binary
+ebpf_loader_test/ebpf_loader_test
+./ebpf_prog_test
