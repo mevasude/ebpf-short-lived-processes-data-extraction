@@ -14,4 +14,4 @@ This project provides a working solution for extracting data on short-lived proc
     sudo ./ebpf_prog_test
 
 You should see output similar to the sample below.
-![alt text](image.png)
+![alt text](sample_output.png)
