@@ -42,21 +42,6 @@ struct {
 
 
 
-enum event_type
-{
-    event_type_none = 0,
-    event_type_regular = 1,
-    event_type_file = 2,
-    event_type_socket = 3,
-    event_type_io = 4,
-    event_type_socketopt = 5,
-    event_type_ebpfprog = 6,
-    event_type_namespace = 7,
-    event_type_userauth = 8,
-    event_type_fork_process = 9,
-    event_type_exec_process = 10,
-    _event_type_last = event_type_exec_process
-};
 
 __attribute__((always_inline))
 int trace_execveimpl_enter(struct trace_event_raw_sys_enter *ctx, unsigned long syscall_id)
@@ -90,6 +75,7 @@ int trace_execveimpl_enter(struct trace_event_raw_sys_enter *ctx, unsigned long 
         event->cmdline[i][0] = '\0';
     }
 
+    event->begin.event_type = event_type_exec_process;
     event->base.pid = pid_tid >> 32;
     event->base.pid2 = pid_tid >> 32;
 
@@ -414,7 +400,7 @@ int task_newtask(struct tracepoint__task__task_newtask *ctx)
 
     event->base.pid = ctx->pid;
     event->base.pid2 = pid_tid >> 32;
-
+    event->begin.event_type = event_type_fork_process;
     event->base.start_time = bpf_ktime_get_ns();
 
     struct task_struct *task = (void *)bpf_get_current_task();

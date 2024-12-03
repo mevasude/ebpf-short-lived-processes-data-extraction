@@ -5,6 +5,13 @@
 #define MAX_PROC 512
 #define ARGS_HASH_SIZE 5120
 
+enum event_type
+{
+    event_type_none = 0,
+    event_type_fork_process = 1,
+    event_type_exec_process = 2    
+};
+
 typedef struct e_begin_rec
 {
     unsigned long int  code_bytes_start; // Always 0xdeadbeef = 3735928559

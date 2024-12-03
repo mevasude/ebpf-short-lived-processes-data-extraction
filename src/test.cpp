@@ -43,30 +43,63 @@
   }
 
   static int event_logger(void* ctx, void* data, size_t len) {
-    //event_fork_process_s *event_process = static_cast<event_fork_process_s*>(data);
-    event_exec_process_s *event_process = static_cast<event_exec_process_s*>(data);    
-    // Construct command line string
-    std::string cmdline;
-    for (int i = 0; i < MAX_CMDLINE_ARGS && event_process->cmdline[i][0] != '\0'; ++i) {
-      cmdline += event_process->cmdline[i];
-      if (i < MAX_CMDLINE_ARGS - 1 && event_process->cmdline[i + 1][0] != '\0') {
-        cmdline += " ";
-      }
-    }
-    // Parse paths
-    std::string process_cmdline = parse_cmdline(event_process->cmdline);
-    std::string process_cwd = parse_kpath(event_process->kpath_cwd);
-    std::string process_path = parse_kpath(event_process->kpath_binary);
 
-    printf(
-        "Event Log - Start Time: %lu, PID: %d, PPID: %d, Process Path: %s, Cmd: %s, CWD: %s\n",
-        event_process->base.start_time,
-        event_process->base.pid,
-        event_process->parent_pid,
-        process_path.c_str(),
-        process_cmdline.c_str(),
-        process_cwd.c_str()
-    );
+    // Extract the common fields
+    auto* event_start = static_cast<event_begin_s*>(data);
+    
+    if (!event_start)
+    {
+        printf("Empty event recieved \n"); 
+        return 0 ;
+    }
+
+    else if ( event_start->event_type == event_type_exec_process)
+    {
+      event_exec_process_s *event_process = static_cast<event_exec_process_s*>(data);    
+      
+      // Construct command line string
+      std::string cmdline;
+      for (int i = 0; i < MAX_CMDLINE_ARGS && event_process->cmdline[i][0] != '\0'; ++i) {
+        cmdline += event_process->cmdline[i];
+        if (i < MAX_CMDLINE_ARGS - 1 && event_process->cmdline[i + 1][0] != '\0') {
+          cmdline += " ";
+        }
+      }
+      
+      // Parse paths
+      std::string process_cmdline = parse_cmdline(event_process->cmdline);
+      std::string process_cwd = parse_kpath(event_process->kpath_cwd);
+      std::string process_path = parse_kpath(event_process->kpath_binary);
+      printf(
+          "Event type: Exec event, Event Log - Start Time: %lu, PID: %d, PPID: %d, Process Path: %s, Cmd: %s, CWD: %s\n",
+          event_process->base.start_time,
+          event_process->base.pid,
+          event_process->parent_pid,
+          process_path.c_str(),
+          process_cmdline.c_str(),
+          process_cwd.c_str()
+      );
+    }
+    else if ( event_start->event_type == event_type_fork_process)
+    {
+      event_fork_process_s *event_process = static_cast<event_fork_process_s*>(data);    
+     
+      // Parse paths
+      std::string process_cwd = parse_kpath(event_process->kpath_cwd);
+      std::string process_path = parse_kpath(event_process->kpath_binary);
+      printf(
+          "Event type: Fork event, Event Log - Start Time: %lu, PID: %d, PPID: %d, Process Path: %s, CWD: %s\n",
+          event_process->base.start_time,
+          event_process->base.pid,
+          event_process->base.pid2, // parent pid;
+          process_path.c_str(),
+          process_cwd.c_str()
+      );
+    }
+    else
+    {
+      printf("Unsupported Event type %d: \n " ,  event_start->event_type );
+    }
 
     return 0;
   }
@@ -135,71 +168,3 @@ int main(int argc, char **argv) {
   return 0;
 }
 
-
-// // Refernce and open the ebpf object file :bpf_object__open_file
-//   _bpf_obj = bpf_object__open_file("test.bpf.o", NULL);
-
-//   if (libbpf_get_error(_bpf_obj)){
-//     printf("unable to open the object"); 
-//     return -1;
-//   }
-
-//   // refernce the programs that you want to attach2 : find_program_by_title
-//   struct bpf_program *prog = find_program_by_title(_bpf_obj , "trace_execve_enter") ;
-//   if ( prog == NULL){
-//     printf("unable to find the program"); 
-//     return -1; 
-//   }
-
-
-//    // refernce the programs that you want to attach2 : find_program_by_title
-//   struct bpf_program *prog2 = find_program_by_title(_bpf_obj , "trace_execve_exit") ;
-//   if ( prog2 == NULL){
-//     printf("unable to find the program"); 
-//     return -1; 
-//   }
-
-//   //type of the proram : bpf_program__set_type
-//   bpf_program__set_type(prog, BPF_PROG_TYPE_TRACEPOINT);
-
-//   //type of the proram : bpf_program__set_type
-//   bpf_program__set_type(prog2, BPF_PROG_TYPE_TRACEPOINT);
-
-//   //load the object : bpf_object__load
-//   if ( bpf_object__load(_bpf_obj))
-//   {
-//       printf("unable to load the object");
-//       return -1;     
-//   }
-
-  
-//   bpf_program__attach_tracepoint(prog , "syscalls" , "sys_enter_execve" );
-//   bpf_program__attach_tracepoint(prog2 , "syscalls" , "sys_exit_execve" );
-
-
-
-//   int rbFd = bpf_object__find_map_fd_by_name(_bpf_obj, mapname);
-//   if (rbFd < 0) {
-//     printf("Failed to find map '%s': %s\n", mapname, strerror(-rbFd));
-//     return 1;
-// }
-//   printf("rbFd = %d\n", rbFd);
-//   struct ring_buffer* ringBuffer = ring_buffer__new(rbFd, event_logger, NULL, NULL);
-//   if(!ringBuffer) {
-//     puts("Failed to creare ring buffer");
-//     return 1;
-//   }
-
-
- 
-
-
-
-
-
-//   while (true)
-//   {
-//     ring_buffer__consume(ringBuffer);
-//     // keep the object file running
-//   }
-//   return 0;
