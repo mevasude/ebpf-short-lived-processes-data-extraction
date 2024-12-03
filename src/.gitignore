@@ -12,9 +12,6 @@ CTestTestfile.cmake
 # libbpf installation folder
 third_party
 
-# Output
-packages_ebpf
-
 # Compiled Object files
 *.slo
 *.lo
@@ -43,5 +40,4 @@ build/
 **/*.profraw
 
 # Test binary
-ebpf_loader_test/ebpf_loader_test
 ./ebpf_prog_test

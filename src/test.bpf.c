@@ -21,9 +21,7 @@ struct {
     __uint(type, BPF_MAP_TYPE_PERF_EVENT_ARRAY);
     __uint(key_size, sizeof(__u32));
     __uint(value_size, sizeof(__u32));
-    __uint(max_entries, MAX_PROC);  // MAX_PROC CPUs - this needs to accommodate most systems as this is CO:RE-alike
-        // Also, as this map is quite small (8 bytes per entry), we could potentially
-        // make this event bigger and it woulnd't cost much
+    __uint(max_entries, MAX_PROC);
 } event_map SEC(".maps");
 
 struct {

@@ -16,7 +16,6 @@
 #include "helperfile.h"
 
 
-// TO-DO: moving these to helperfile is throwing errors, need to update makefile probably
   std::string parse_kpath(event_kpath_s& kpath)
     {
       std::string result;
