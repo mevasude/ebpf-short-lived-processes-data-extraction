@@ -1,7 +1,7 @@
 # ebpf-short-lived-processes-data-extraction
 # eBPF Short-Lived Processes Data Extraction on Linux for Security Threat Analysis
 
-This project provides a working solution for extracting data on short-lived processes using eBPF on Linux, aimed at enhancing security threat analysis.
+This project provides a working solution for extracting data on short-lived processes using eBPF on Linux, aimed at enhancing security threat analysis. More details in the paper [here](Short_Lived_Process_eBPF.pdf)
 
 ## Installation
 
